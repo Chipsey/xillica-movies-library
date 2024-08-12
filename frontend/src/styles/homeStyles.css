@@ -1,0 +1,14 @@
+.home_back_gradient {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(0deg, #000000 40%, #00000000 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+}
+
+.home_title {
+  color: rgb(255, 255, 255);
+  z-index: 10;
+}
