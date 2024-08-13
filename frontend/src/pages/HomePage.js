@@ -6,15 +6,17 @@ import {
   CircularProgress,
   Box,
   Button,
+  Table,
 } from "@mui/material";
 import { fetchItems } from "../api/api";
-import { LIST_MOVIES } from "../config/apiEndpoints";
+import { LIST_MOVIES, MOVIE_DETAILS_TMDB } from "../config/apiEndpoints";
 import Background from "../components/background";
 import MovieCard from "../components/movieCard";
 import DetailCard from "../components/detail-card";
 
 import "../styles/homeStyles.css";
 import "../index.css";
+import { TMDB_API_KEY } from "../config/environment";
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -44,9 +46,13 @@ const HomePage = () => {
     fetchData();
   }, [pageNo]);
 
-  const handleMovieClick = (movie) => {
+  const handleMovieClick = async (movie) => {
     setActiveMovie(movie);
   };
+
+  function replaceSpacesWithPlus(sentence) {
+    return sentence.split(" ").join("+");
+  }
 
   const handleNextPage = () => {
     setPageNo((prevPageNo) => prevPageNo + 1);
@@ -100,22 +106,146 @@ const HomePage = () => {
               <DetailCard movie={activeMovie}></DetailCard>
             </div>
           </Grid>
+
           <div class="home_back_gradient z-1"></div>
 
           {/* Movie Details */}
           <div class="position-absolute">
             <Typography
-              sx={{ marginTop: primaryHeight, marginLeft: primaryWidth * 0.1 }}
+              sx={{
+                marginTop: primaryHeight,
+                marginLeft: primaryWidth * 0.1,
+                maxWidth: windowWidth * 0.45,
+              }}
             >
-              <h1 class="color-white align-content-end m-0">
+              <h1 class="color-white align-content-end m-0 w-100">
                 {activeMovie?.title_english}
               </h1>
               <h2 class="color-white m-0 opacity-50">{activeMovie?.year}</h2>
-              <div
+              {/* <div
                 class="w-50 "
                 style={{ height: 0.5, backgroundColor: "white" }}
-              ></div>
+              ></div> */}
+              <h4 class="color-white w-40 mt-3 mb-3 fw-100">
+                {" "}
+                {activeMovie?.description_full}
+              </h4>
             </Typography>
+            <Grid container xl={12} m={primaryWidth * 0.1}>
+              <Grid xl={3}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "left",
+                    minWidth: "100px",
+                  }}
+                >
+                  <Typography sx={{ color: "grey", textAlign: "left" }}>
+                    IMDB
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: "white",
+                      textAlign: "left",
+                      fontSize: "larger",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {activeMovie?.rating}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid xl={3}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "left",
+                    minWidth: "100px",
+                  }}
+                >
+                  <Typography sx={{ color: "grey", textAlign: "left" }}>
+                    Language
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: "white",
+                      textAlign: "left",
+                      fontSize: "larger",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {activeMovie?.language}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid xl={6}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "left",
+                    minWidth: "100px",
+                  }}
+                >
+                  <Typography sx={{ color: "grey", textAlign: "left" }}>
+                    Genres
+                  </Typography>
+                  <div
+                    class="mt-1"
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      color: "white",
+                    }}
+                  >
+                    {activeMovie?.genres.map((genre, index) => (
+                      <span key={index}>
+                        {genre}
+                        {index < activeMovie.genres.length - 1 && "_"}
+                      </span>
+                    ))}
+                  </div>
+                </Box>
+              </Grid>
+            </Grid>
+            <div
+              class="w-100"
+              style={{
+                height: 0.5,
+                backgroundColor: "grey",
+                width: windowWidth * 0.45,
+                opacity: "0.4",
+              }}
+            ></div>
+            {activeMovie?.torrents.map((torrent) => (
+              <Grid container xl={12} mt={3} mb={3} key={torrent.id}>
+                <Grid xl={4} mb={3}>
+                  <Typography sx={{ color: "grey", textAlign: "center" }}>
+                    {torrent?.quality}
+                  </Typography>
+                </Grid>
+                <Grid xl={4}>
+                  <Typography sx={{ color: "grey", textAlign: "center" }}>
+                    {torrent?.size}
+                  </Typography>
+                </Grid>
+                <Grid xl={4}>
+                  <Typography sx={{ color: "white", textAlign: "center" }}>
+                    <a href={torrent?.url}> Download </a>
+                  </Typography>
+                </Grid>
+                <div
+                  class="w-100"
+                  style={{
+                    height: 0.5,
+                    backgroundColor: "grey",
+                    opacity: "0.4",
+                  }}
+                ></div>
+              </Grid>
+            ))}
           </div>
           {/*  */}
           <Grid container xl={5} spacing={2} mt={2} ml={8}>
@@ -159,6 +289,7 @@ const HomePage = () => {
               >
                 Next
               </Button>
+              {loading && <CircularProgress />}
             </Box>
           </Grid>
         </Grid>
