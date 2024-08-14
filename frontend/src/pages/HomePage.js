@@ -37,7 +37,10 @@ const HomePage = () => {
         const moviesList = await fetchItems(
           `${LIST_MOVIES}?limit=${moviesPerPage}&page=${pageNo}&query_term=${query}`
         );
-        if (moviesList?.data?.movie_count > 0) {
+        if (
+          moviesList?.data?.movie_count > 0 &&
+          moviesList?.data?.movies != null
+        ) {
           setMovies(moviesList?.data?.movies);
           setActiveMovie(moviesList?.data?.movies[0]);
         }
@@ -67,12 +70,18 @@ const HomePage = () => {
 
   const handleNextPage = () => {
     setPageNo((prevPageNo) => prevPageNo + 1);
+    setActiveMovieIndex(0);
   };
 
   const handlePreviousPage = () => {
     if (pageNo > 1) {
       setPageNo((prevPageNo) => prevPageNo - 1);
+      setActiveMovieIndex(0);
     }
+  };
+
+  const handleReload = () => {
+    window.location.reload();
   };
 
   const windowWidth = window.innerWidth;
@@ -104,11 +113,25 @@ const HomePage = () => {
           }}
         >
           <Typography
-            color="error"
-            sx={{ fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" } }}
+            sx={{
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+                md: "1.125rem",
+              },
+            }}
+            className="color-white z2"
           >
             Failed to fetch items: {error}
           </Typography>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleReload}
+            sx={{ marginTop: 2 }}
+          >
+            Retry
+          </Button>
         </Container>
       ) : (
         /////////////////////////////////////////////////////////////////////////////////////////

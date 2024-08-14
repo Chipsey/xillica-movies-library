@@ -43,7 +43,15 @@ const MovieCard = ({ movie, onClick, isActive }) => {
           }}
         >
           <Typography gutterBottom variant="h8" component="div" color="white">
-            <div className="card_movie_title">{movie?.title_english}</div>
+            <div
+              className="card_movie_title"
+              style={{
+                maxHeight: "40px",
+                overflowY: "auto",
+              }}
+            >
+              {movie?.title_english}
+            </div>
           </Typography>
           <Typography
             variant="body3"
