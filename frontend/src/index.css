@@ -16,8 +16,15 @@ code {
   z-index: -1;
 }
 
+.z-2 {
+  z-index: -2;
+}
+
 .z1 {
   z-index: 1;
+}
+.z2 {
+  z-index: 2;
 }
 
 .color-white {
@@ -99,6 +106,25 @@ code {
 }
 .m-5 {
   margin: 3rem;
+}
+
+.ml-0 {
+  margin-left: 0;
+}
+.ml-1 {
+  margin-left: 0.25rem;
+}
+.ml-2 {
+  margin-left: 0.5rem;
+}
+.ml-3 {
+  margin-left: 1rem;
+}
+.ml-4 {
+  margin-left: 1.5rem;
+}
+.ml-5 {
+  margin-left: 3rem;
 }
 
 /* Padding */
@@ -665,3 +691,31 @@ code {
 .align-text-bottom {
   vertical-align: text-bottom !important;
 }
+
+/* color data */
+
+.color-yellow {
+  color: yellow;
+}
+
+.color-orange {
+  color: orange;
+}
+
+/* 
+{
+    "url": "https://yts.mx/torrent/download/28308F83DB9FD43BE0E7AC445F4A23A06755DC0A",
+    "hash": "28308F83DB9FD43BE0E7AC445F4A23A06755DC0A",
+    "quality": "720p",
+    "type": "bluray",
+    "is_repack": "0",
+    "video_codec": "x264",
+    "bit_depth": "8",
+    "audio_channels": "2.0",
+    "seeds": 100,
+    "peers": 11,
+    "size": "842.21 MB",
+    "size_bytes": 883121193,
+    "date_uploaded": "2024-01-05 07:22:54",
+    "date_uploaded_unix": 1704435774
+} */

@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import "../styles/movieCardStyles.css";
 
-const MovieCard = ({ movie, onClick }) => {
+const MovieCard = ({ movie, onClick, isActive }) => {
   console.log(movie);
   const windowWidth = window.innerWidth;
   const primaryWidth = windowWidth / 30;
@@ -22,7 +22,9 @@ const MovieCard = ({ movie, onClick }) => {
         boxShadow: 3,
         borderRadius: 3,
         height: primaryWidth * 4.5,
-        backgroundColor: "rgba(100, 100, 100)",
+        backgroundColor: isActive
+          ? "rgba(50, 50, 50, 0.8)"
+          : "rgba(15, 15, 15, 0.8)",
       }}
     >
       <CardActionArea>
@@ -51,7 +53,13 @@ const MovieCard = ({ movie, onClick }) => {
               mt: "auto", // Move the year to the bottom
             }}
           >
-            <div className="card_movie_year">{movie?.year}</div>
+            <div class="d-flex justify-content-between">
+              <div className="card_movie_year font-small">{movie?.year}</div>
+              <div className="font-small align-content-center ">
+                <span class="opacity-25"> IMDB</span>
+                <span class="color-orange opacity-100"> {movie?.rating}</span>
+              </div>
+            </div>
           </Typography>
         </CardContent>
       </CardActionArea>
