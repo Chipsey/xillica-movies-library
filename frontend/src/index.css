@@ -710,15 +710,15 @@ code {
 
 /* Customize the scrollbar track */
 ::-webkit-scrollbar-track {
-  background: #474747;
+  background: #121212;
   border-radius: 10px;
 }
 
 /* Customize the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
-  background: #151515;
+  background: #1c1c1c;
   border-radius: 10px;
-  border: 3px solid #151515; /* Adds padding around the thumb */
+  border: 3px solid #1c1c1c; /* Adds padding around the thumb */
 }
 
 /* Customize the scrollbar thumb on hover */
