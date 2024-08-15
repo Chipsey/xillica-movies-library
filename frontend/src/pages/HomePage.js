@@ -14,7 +14,11 @@ import {
   FormControl,
 } from "@mui/material";
 import { fetchItems } from "../api/api";
-import { LIST_MOVIES, MOVIE_DETAILS_TMDB } from "../config/apiEndpoints";
+import {
+  LIST_MOVIES,
+  MOVIE_DETAILS,
+  MOVIE_DETAILS_TMDB,
+} from "../config/apiEndpoints";
 import Background from "../components/background";
 import MovieCard from "../components/movieCard";
 import DetailCard from "../components/detail-card";
@@ -28,13 +32,17 @@ import {
   SORT_BY,
   TMDB_API_KEY,
 } from "../config/environment";
+import Cast from "../components/cast";
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
+  const [cast, setCast] = useState([]);
   const [activeMovie, setActiveMovie] = useState(null);
   const [activeMovieIndex, setActiveMovieIndex] = useState(0);
+  const [activeMovieIMDBID, setActiveMovieIMDBID] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [movieCount, setMovieCount] = useState(null);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
   const [isNoMovies, setIsNoMovies] = useState(false);
@@ -78,7 +86,7 @@ const HomePage = () => {
           quality: quality || "",
           minimum_rating: minimumRating || "",
           genre: genre || "",
-          sort_by: sortBy || "",
+          sort_by: sortBy || "date_added",
         }).toString();
 
         const moviesList = await fetchItems(`${LIST_MOVIES}?${queryParams}`);
@@ -89,7 +97,9 @@ const HomePage = () => {
         ) {
           setIsNoMovies(false);
           setMovies(moviesList?.data?.movies);
-          setActiveMovie(moviesList?.data?.movies[0]);
+          setActiveMovieIndex(0);
+          setActiveMovieIMDBID(moviesList?.data?.movies[0]?.id);
+          setMovieCount(moviesList?.data?.movie_count);
         } else {
           setIsNoMovies(true);
         }
@@ -103,9 +113,33 @@ const HomePage = () => {
     fetchData();
   }, [pageNo, query, selectedOptions]);
 
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      // setLoading(true);
+      setCast([]);
+      try {
+        const movieDetails = await fetchItems(
+          `${MOVIE_DETAILS}?movie_id=${activeMovieIMDBID}&with_cast=true`
+        );
+        setActiveMovie(movieDetails?.data?.movie);
+        if (movieDetails?.data?.movie?.cast !== undefined) {
+          setCast(movieDetails?.data?.movie?.cast);
+          console.log(cast);
+        }
+
+        // setLoading(false);
+      } catch (error) {
+        setError(error.message);
+      }
+      setLoading(false);
+    };
+
+    fetchMovieDetails();
+  }, [activeMovieIMDBID]);
+
   const handleMovieClick = async (movie, index) => {
-    setActiveMovie(movie);
     setActiveMovieIndex(index);
+    setActiveMovieIMDBID(movie.id);
   };
 
   const handleSearch = (text) => {
@@ -202,36 +236,38 @@ const HomePage = () => {
               overflowY: "auto",
             }}
           >
-            <Typography
-              sx={{
-                marginTop: primaryHeight * 0.5,
-                marginLeft: primaryWidth * 0.1,
-                maxWidth: windowWidth * 0.45,
-              }}
-            >
-              <div
-                class="color-white align-content-end m-0 w-100 fw-600"
-                style={{ fontSize: primaryWidth }}
-              >
-                {activeMovie?.title_english}
-                <div
-                  class="opacity-50"
-                  style={{ fontSize: primaryWidth * 0.5 }}
-                >
-                  {activeMovie?.year}
-                </div>
-              </div>
-              <h4
-                class="color-white w-100 mt-3 mb-3 fw-100"
-                style={{
-                  maxHeight: "170px",
-                  overflowY: "auto",
+            <Grid container ml={5} mb={5}>
+              <Typography
+                sx={{
+                  marginTop: primaryHeight * 0.5,
+                  maxWidth: windowWidth * 0.45,
                 }}
               >
-                {activeMovie?.description_full}
-              </h4>
-            </Typography>
-            <Grid container xl={12} m={primaryWidth * 0.1} mb={5}>
+                <div
+                  class="color-white align-content-end m-0 w-100 fw-600"
+                  style={{ fontSize: primaryWidth * 0.6 }}
+                >
+                  {activeMovie?.title_english}
+                  <div
+                    class="opacity-50"
+                    style={{ fontSize: primaryWidth * 0.5 }}
+                  >
+                    {activeMovie?.year}
+                  </div>
+                </div>
+                <h4
+                  class="color-white w-100 mt-3 mb-3 fw-100"
+                  style={{
+                    maxHeight: "170px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {activeMovie?.description_full}
+                </h4>
+              </Typography>
+            </Grid>
+
+            <Grid container xl={12} ml={5} mb={5}>
               <Grid xl={3}>
                 <Box
                   sx={{
@@ -320,6 +356,19 @@ const HomePage = () => {
                 </Box>
               </Grid>
             </Grid>
+
+            <Grid container xl={12} ml={5} mb={3}>
+              <Typography variant="h6" sx={{ color: "white", opacity: "0.75" }}>
+                Cast
+              </Typography>
+            </Grid>
+            <Grid container mb={5}>
+              {cast.map((item) => (
+                <Grid item xl={2} mb={3} key={item.id}>
+                  <Cast image={item?.url_small_image} name={item?.name} />
+                </Grid>
+              ))}
+            </Grid>
             <Grid
               container
               xl={12}
@@ -341,7 +390,7 @@ const HomePage = () => {
               </Grid>
             </Grid>
             <div
-              class="w-100"
+              class="w-100 mb-3"
               style={{
                 height: 0.5,
                 backgroundColor: "grey",
@@ -353,8 +402,7 @@ const HomePage = () => {
               <Grid
                 container
                 xl={12}
-                mt={3}
-                mb={3}
+                mb={5}
                 key={torrent.id}
                 sx={{ alignItems: "center" }}
               >
@@ -547,6 +595,7 @@ const HomePage = () => {
               <Button
                 variant="contained"
                 onClick={handleNextPage}
+                disabled={movieCount <= 8}
                 sx={{ marginLeft: 1, backgroundColor: "white", color: "black" }}
               >
                 Next

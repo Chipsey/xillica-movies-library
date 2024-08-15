@@ -26,6 +26,7 @@ const Background = ({ children, backgroundImage }) => {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           filter: "blur(15px)",
+          opacity: 0.5,
           zIndex: -1,
         }}
       ></div>
