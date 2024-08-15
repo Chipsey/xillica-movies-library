@@ -702,6 +702,30 @@ code {
   color: orange;
 }
 
+/* Customize the width and height of the scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* Customize the scrollbar track */
+::-webkit-scrollbar-track {
+  background: #474747;
+  border-radius: 10px;
+}
+
+/* Customize the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: #151515;
+  border-radius: 10px;
+  border: 3px solid #151515; /* Adds padding around the thumb */
+}
+
+/* Customize the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #1e1e1e;
+}
+
 /* 
 {
     "url": "https://yts.mx/torrent/download/28308F83DB9FD43BE0E7AC445F4A23A06755DC0A",

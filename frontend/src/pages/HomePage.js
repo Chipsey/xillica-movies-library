@@ -8,6 +8,10 @@ import {
   Button,
   Table,
   TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import { fetchItems } from "../api/api";
 import { LIST_MOVIES, MOVIE_DETAILS_TMDB } from "../config/apiEndpoints";
@@ -17,7 +21,13 @@ import DetailCard from "../components/detail-card";
 
 import "../styles/homeStyles.css";
 import "../index.css";
-import { TMDB_API_KEY } from "../config/environment";
+import {
+  GENRE,
+  MINIMUM_RATING,
+  QUALITY,
+  SORT_BY,
+  TMDB_API_KEY,
+} from "../config/environment";
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -27,6 +37,32 @@ const HomePage = () => {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
+  const [isNoMovies, setIsNoMovies] = useState(false);
+
+  const [selectedOptions, setSelectedOptions] = useState({
+    quality: "",
+    minimumRating: null,
+    genre: "",
+    sortBy: "",
+  });
+
+  // Function to handle selection change
+  const handleSelectionChange = (event, dropdown) => {
+    console.log(dropdown);
+
+    setSelectedOptions((prevState) => ({
+      ...prevState,
+      [dropdown]: event.target.value,
+    }));
+  };
+
+  // Data fetching example
+  const [options, setOptions] = useState({
+    quality: QUALITY,
+    minimumRating: MINIMUM_RATING,
+    genre: GENRE,
+    sortBy: SORT_BY,
+  });
 
   const moviesPerPage = 8;
   const [pageNo, setPageNo] = useState(1);
@@ -34,15 +70,28 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const moviesList = await fetchItems(
-          `${LIST_MOVIES}?limit=${moviesPerPage}&page=${pageNo}&query_term=${query}`
-        );
+        const { quality, minimumRating, genre, sortBy } = selectedOptions;
+        const queryParams = new URLSearchParams({
+          limit: moviesPerPage,
+          page: pageNo,
+          query_term: query,
+          quality: quality || "",
+          minimum_rating: minimumRating || "",
+          genre: genre || "",
+          sort_by: sortBy || "",
+        }).toString();
+
+        const moviesList = await fetchItems(`${LIST_MOVIES}?${queryParams}`);
+
         if (
           moviesList?.data?.movie_count > 0 &&
           moviesList?.data?.movies != null
         ) {
+          setIsNoMovies(false);
           setMovies(moviesList?.data?.movies);
           setActiveMovie(moviesList?.data?.movies[0]);
+        } else {
+          setIsNoMovies(true);
         }
         setLoading(false);
       } catch (error) {
@@ -52,7 +101,7 @@ const HomePage = () => {
     };
 
     fetchData();
-  }, [pageNo, query]);
+  }, [pageNo, query, selectedOptions]);
 
   const handleMovieClick = async (movie, index) => {
     setActiveMovie(movie);
@@ -148,9 +197,9 @@ const HomePage = () => {
           <div
             class="position-absolute"
             style={{
-              maxHeight: "90vh", // Set the maximum height
-              overflowX: "clip", // Enable vertical scrolling
-              overflowY: "auto", // Enable vertical scrolling
+              maxHeight: "90vh",
+              overflowX: "clip",
+              overflowY: "auto",
             }}
           >
             <Typography
@@ -205,6 +254,7 @@ const HomePage = () => {
                       fontSize: "larger",
                       fontWeight: "bold",
                     }}
+                    style={{ fontSize: primaryWidth * 0.5 }}
                   >
                     {activeMovie?.rating}
                   </Typography>
@@ -370,14 +420,26 @@ const HomePage = () => {
             ))}
           </div>
           {/*  */}
-          <Grid container xl={5} spacing={2} mt={0} ml={8} className="z2">
+          <Grid
+            container
+            xl={5}
+            spacing={2}
+            mt={0}
+            ml={8}
+            className="z2"
+            style={{
+              maxHeight: "90vh",
+              overflowX: "clip",
+              overflowY: "auto",
+            }}
+          >
             <h1 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
               Xillica Movies
             </h1>
             <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
               Surf Your Favorite Movies
             </h4>
-            <Grid container xl={12} mt={3} mb={1}>
+            <Grid container xl={12} mt={3} mb={1} mr={6}>
               <Grid xl={12}>
                 <input
                   onChange={(event) => handleSearch(event.target.value)}
@@ -385,9 +447,9 @@ const HomePage = () => {
                   placeholder="Let's Start Searching.."
                   style={{
                     width: "100%",
-                    backgroundColor: "transparent",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
                     color: "white",
-                    border: "2px solid grey",
+                    border: "1px solid white",
                     borderRadius: "50px",
                     padding: windowWidth * 0.008,
                     outline: "none",
@@ -396,15 +458,74 @@ const HomePage = () => {
                 />
               </Grid>
             </Grid>
-            {movies.map((item, index) => (
-              <Grid item xl={3} key={item.id}>
-                <MovieCard
-                  movie={item}
-                  onClick={() => handleMovieClick(item, index)}
-                  isActive={index === activeMovieIndex}
-                />
+            <Grid
+              container
+              spacing={2}
+              mb={5}
+              justifyContent="center"
+              alignItems="center"
+            >
+              {Object.keys(options).map((key, index) => (
+                <Grid item xs={3} key={index}>
+                  <FormControl
+                    variant="filled"
+                    sx={{ backgroundColor: "grey", borderRadius: "10px" }}
+                    fullWidth
+                  >
+                    <InputLabel id={`${key}-label`}>
+                      {options[key].title}
+                    </InputLabel>
+                    <Select
+                      sx={{
+                        color: "white",
+                        backgroundColor: "rgba(230, 230, 230, 0.3)",
+                      }}
+                      labelId={`${key}-label`}
+                      id={key}
+                      value={selectedOptions[key] || ""}
+                      onChange={(event) => handleSelectionChange(event, key)}
+                    >
+                      {options[key].values.map((optionValue, optionIndex) => (
+                        <MenuItem value={optionValue} key={optionIndex}>
+                          {optionValue}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              ))}
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleReload}
+                sx={{
+                  marginTop: 1,
+                  color: "white",
+                }}
+              >
+                Reset Search
+              </Button>
+            </Grid>
+
+            {isNoMovies ? (
+              <Grid xl={3}>
+                <Typography sx={{ color: "grey", textAlign: "left" }}>
+                  Nothing Found yet! Keep typing..
+                </Typography>
               </Grid>
-            ))}
+            ) : (
+              <Grid container>
+                {movies.map((item, index) => (
+                  <Grid item xl={3} mb={3} key={item.id}>
+                    <MovieCard
+                      movie={item}
+                      onClick={() => handleMovieClick(item, index)}
+                      isActive={index === activeMovieIndex}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
             <Box
               sx={{
                 display: "flex",
