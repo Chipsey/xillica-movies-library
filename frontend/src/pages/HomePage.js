@@ -7,6 +7,11 @@ import {
   Box,
   Button,
   Table,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import { fetchItems } from "../api/api";
 import { LIST_MOVIES, MOVIE_DETAILS_TMDB } from "../config/apiEndpoints";
@@ -16,14 +21,48 @@ import DetailCard from "../components/detail-card";
 
 import "../styles/homeStyles.css";
 import "../index.css";
-import { TMDB_API_KEY } from "../config/environment";
+import {
+  GENRE,
+  MINIMUM_RATING,
+  QUALITY,
+  SORT_BY,
+  TMDB_API_KEY,
+} from "../config/environment";
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
   const [activeMovie, setActiveMovie] = useState(null);
+  const [activeMovieIndex, setActiveMovieIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
+  const [isNoMovies, setIsNoMovies] = useState(false);
+
+  const [selectedOptions, setSelectedOptions] = useState({
+    quality: "",
+    minimumRating: null,
+    genre: "",
+    sortBy: "",
+  });
+
+  // Function to handle selection change
+  const handleSelectionChange = (event, dropdown) => {
+    console.log(dropdown);
+
+    setSelectedOptions((prevState) => ({
+      ...prevState,
+      [dropdown]: event.target.value,
+    }));
+  };
+
+  // Data fetching example
+  const [options, setOptions] = useState({
+    quality: QUALITY,
+    minimumRating: MINIMUM_RATING,
+    genre: GENRE,
+    sortBy: SORT_BY,
+  });
 
   const moviesPerPage = 8;
   const [pageNo, setPageNo] = useState(1);
@@ -31,11 +70,29 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const moviesList = await fetchItems(
-          `${LIST_MOVIES}?limit=${moviesPerPage}&page=${pageNo}`
-        );
-        setMovies(moviesList?.data?.movies);
-        setActiveMovie(moviesList?.data?.movies[0]);
+        const { quality, minimumRating, genre, sortBy } = selectedOptions;
+        const queryParams = new URLSearchParams({
+          limit: moviesPerPage,
+          page: pageNo,
+          query_term: query,
+          quality: quality || "",
+          minimum_rating: minimumRating || "",
+          genre: genre || "",
+          sort_by: sortBy || "",
+        }).toString();
+
+        const moviesList = await fetchItems(`${LIST_MOVIES}?${queryParams}`);
+
+        if (
+          moviesList?.data?.movie_count > 0 &&
+          moviesList?.data?.movies != null
+        ) {
+          setIsNoMovies(false);
+          setMovies(moviesList?.data?.movies);
+          setActiveMovie(moviesList?.data?.movies[0]);
+        } else {
+          setIsNoMovies(true);
+        }
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -44,10 +101,16 @@ const HomePage = () => {
     };
 
     fetchData();
-  }, [pageNo]);
+  }, [pageNo, query, selectedOptions]);
 
-  const handleMovieClick = async (movie) => {
+  const handleMovieClick = async (movie, index) => {
     setActiveMovie(movie);
+    setActiveMovieIndex(index);
+  };
+
+  const handleSearch = (text) => {
+    const processedQuery = replaceSpacesWithPlus(text);
+    setQuery(processedQuery);
   };
 
   function replaceSpacesWithPlus(sentence) {
@@ -56,12 +119,18 @@ const HomePage = () => {
 
   const handleNextPage = () => {
     setPageNo((prevPageNo) => prevPageNo + 1);
+    setActiveMovieIndex(0);
   };
 
   const handlePreviousPage = () => {
     if (pageNo > 1) {
       setPageNo((prevPageNo) => prevPageNo - 1);
+      setActiveMovieIndex(0);
     }
+  };
+
+  const handleReload = () => {
+    window.location.reload();
   };
 
   const windowWidth = window.innerWidth;
@@ -93,13 +162,28 @@ const HomePage = () => {
           }}
         >
           <Typography
-            color="error"
-            sx={{ fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" } }}
+            sx={{
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+                md: "1.125rem",
+              },
+            }}
+            className="color-white z2"
           >
             Failed to fetch items: {error}
           </Typography>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleReload}
+            sx={{ marginTop: 2 }}
+          >
+            Retry
+          </Button>
         </Container>
       ) : (
+        /////////////////////////////////////////////////////////////////////////////////////////
         <Grid container xl={12}>
           <Grid container xl={6}>
             <div className="z-1">
@@ -107,31 +191,47 @@ const HomePage = () => {
             </div>
           </Grid>
 
-          <div class="home_back_gradient z-1"></div>
+          {/* <div class="home_back_gradient z-1"></div> */}
 
           {/* Movie Details */}
-          <div class="position-absolute">
+          <div
+            class="position-absolute"
+            style={{
+              maxHeight: "90vh",
+              overflowX: "clip",
+              overflowY: "auto",
+            }}
+          >
             <Typography
               sx={{
-                marginTop: primaryHeight,
+                marginTop: primaryHeight * 0.5,
                 marginLeft: primaryWidth * 0.1,
                 maxWidth: windowWidth * 0.45,
               }}
             >
-              <h1 class="color-white align-content-end m-0 w-100">
+              <div
+                class="color-white align-content-end m-0 w-100 fw-600"
+                style={{ fontSize: primaryWidth }}
+              >
                 {activeMovie?.title_english}
-              </h1>
-              <h2 class="color-white m-0 opacity-50">{activeMovie?.year}</h2>
-              {/* <div
-                class="w-50 "
-                style={{ height: 0.5, backgroundColor: "white" }}
-              ></div> */}
-              <h4 class="color-white w-40 mt-3 mb-3 fw-100">
-                {" "}
+                <div
+                  class="opacity-50"
+                  style={{ fontSize: primaryWidth * 0.5 }}
+                >
+                  {activeMovie?.year}
+                </div>
+              </div>
+              <h4
+                class="color-white w-100 mt-3 mb-3 fw-100"
+                style={{
+                  maxHeight: "170px",
+                  overflowY: "auto",
+                }}
+              >
                 {activeMovie?.description_full}
               </h4>
             </Typography>
-            <Grid container xl={12} m={primaryWidth * 0.1}>
+            <Grid container xl={12} m={primaryWidth * 0.1} mb={5}>
               <Grid xl={3}>
                 <Box
                   sx={{
@@ -141,16 +241,20 @@ const HomePage = () => {
                     minWidth: "100px",
                   }}
                 >
-                  <Typography sx={{ color: "grey", textAlign: "left" }}>
+                  <Typography
+                    className="opacity-75"
+                    sx={{ color: "white", textAlign: "left" }}
+                  >
                     IMDB
                   </Typography>
                   <Typography
                     sx={{
-                      color: "white",
+                      color: "orange",
                       textAlign: "left",
                       fontSize: "larger",
                       fontWeight: "bold",
                     }}
+                    style={{ fontSize: primaryWidth * 0.5 }}
                   >
                     {activeMovie?.rating}
                   </Typography>
@@ -165,7 +269,10 @@ const HomePage = () => {
                     minWidth: "100px",
                   }}
                 >
-                  <Typography sx={{ color: "grey", textAlign: "left" }}>
+                  <Typography
+                    className="opacity-75"
+                    sx={{ color: "white", textAlign: "left" }}
+                  >
                     Language
                   </Typography>
                   <Typography
@@ -189,11 +296,14 @@ const HomePage = () => {
                     minWidth: "100px",
                   }}
                 >
-                  <Typography sx={{ color: "grey", textAlign: "left" }}>
+                  <Typography
+                    className="opacity-75"
+                    sx={{ color: "white", textAlign: "left" }}
+                  >
                     Genres
                   </Typography>
                   <div
-                    class="mt-1"
+                    class="mt-1 w-75"
                     style={{
                       display: "flex",
                       flexWrap: "wrap",
@@ -203,11 +313,31 @@ const HomePage = () => {
                     {activeMovie?.genres.map((genre, index) => (
                       <span key={index}>
                         {genre}
-                        {index < activeMovie.genres.length - 1 && "_"}
+                        <span class="opacity-0">--</span>{" "}
                       </span>
                     ))}
                   </div>
                 </Box>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              xl={12}
+              ml={5}
+              mb={2}
+              mt={3}
+              sx={{ color: "white", opacity: 0.5 }}
+            >
+              <Grid xl={4}>
+                <span class="font-small">Quality</span>
+              </Grid>
+              <Grid xl={3}>
+                {" "}
+                <span class="font-small">Size</span>
+              </Grid>
+              <Grid xl={3}>
+                {" "}
+                <span class="font-small">Links</span>
               </Grid>
             </Grid>
             <div
@@ -215,26 +345,68 @@ const HomePage = () => {
               style={{
                 height: 0.5,
                 backgroundColor: "grey",
-                width: windowWidth * 0.45,
+                width: windowWidth * 0.5,
                 opacity: "0.4",
               }}
             ></div>
             {activeMovie?.torrents.map((torrent) => (
-              <Grid container xl={12} mt={3} mb={3} key={torrent.id}>
-                <Grid xl={4} mb={3}>
-                  <Typography sx={{ color: "grey", textAlign: "center" }}>
+              <Grid
+                container
+                xl={12}
+                mt={3}
+                mb={3}
+                key={torrent.id}
+                sx={{ alignItems: "center" }}
+              >
+                <Grid xl={4} mb={3} ml={5}>
+                  <Typography sx={{ color: "white", textAlign: "left" }}>
                     {torrent?.quality}
                   </Typography>
+                  <Typography sx={{ color: "white", textAlign: "left" }}>
+                    {torrent?.type} {torrent?.video_codec}
+                  </Typography>
+                  <Typography
+                    fontSize="small"
+                    sx={{ color: "grey", textAlign: "left" }}
+                  >
+                    {torrent?.audio_channels} audio Channels
+                  </Typography>
+                  <Typography
+                    fontSize="small"
+                    sx={{ color: "grey", textAlign: "left" }}
+                  >
+                    {torrent?.bit_depth} bit depth
+                  </Typography>
                 </Grid>
-                <Grid xl={4}>
-                  <Typography sx={{ color: "grey", textAlign: "center" }}>
+                <Grid xl={3}>
+                  <Typography sx={{ color: "grey", textAlign: "left" }}>
                     {torrent?.size}
                   </Typography>
                 </Grid>
                 <Grid xl={4}>
-                  <Typography sx={{ color: "white", textAlign: "center" }}>
-                    <a href={torrent?.url}> Download </a>
-                  </Typography>
+                  <a href={torrent?.url}>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor:
+                          torrent?.type === "bluray" ? "green" : "white",
+                        color: torrent?.type === "bluray" ? "white" : "black",
+                      }}
+                    >
+                      Download
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor:
+                          torrent?.type === "bluray" ? "green" : "white",
+                        color: torrent?.type === "bluray" ? "white" : "black",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      Magnet
+                    </Button>
+                  </a>
                 </Grid>
                 <div
                   class="w-100"
@@ -248,22 +420,112 @@ const HomePage = () => {
             ))}
           </div>
           {/*  */}
-          <Grid container xl={5} spacing={2} mt={2} ml={8}>
+          <Grid
+            container
+            xl={5}
+            spacing={2}
+            mt={0}
+            ml={8}
+            className="z2"
+            style={{
+              maxHeight: "90vh",
+              overflowX: "clip",
+              overflowY: "auto",
+            }}
+          >
             <h1 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
               Xillica Movies
             </h1>
             <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
               Surf Your Favorite Movies
             </h4>
-            {movies.map((item) => (
-              <Grid item xl={3} key={item.id}>
-                <MovieCard
-                  movie={item}
-                  onClick={() => handleMovieClick(item)}
+            <Grid container xl={12} mt={3} mb={1} mr={6}>
+              <Grid xl={12}>
+                <input
+                  onChange={(event) => handleSearch(event.target.value)}
+                  type="text"
+                  placeholder="Let's Start Searching.."
+                  style={{
+                    width: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "white",
+                    border: "1px solid white",
+                    borderRadius: "50px",
+                    padding: windowWidth * 0.008,
+                    outline: "none",
+                  }}
+                  class="font-small"
                 />
               </Grid>
-            ))}
+            </Grid>
+            <Grid
+              container
+              spacing={2}
+              mb={5}
+              justifyContent="center"
+              alignItems="center"
+            >
+              {Object.keys(options).map((key, index) => (
+                <Grid item xs={3} key={index}>
+                  <FormControl
+                    variant="filled"
+                    sx={{ backgroundColor: "grey", borderRadius: "10px" }}
+                    fullWidth
+                  >
+                    <InputLabel id={`${key}-label`}>
+                      {options[key].title}
+                    </InputLabel>
+                    <Select
+                      sx={{
+                        color: "white",
+                        backgroundColor: "rgba(230, 230, 230, 0.3)",
+                      }}
+                      labelId={`${key}-label`}
+                      id={key}
+                      value={selectedOptions[key] || ""}
+                      onChange={(event) => handleSelectionChange(event, key)}
+                    >
+                      {options[key].values.map((optionValue, optionIndex) => (
+                        <MenuItem value={optionValue} key={optionIndex}>
+                          {optionValue}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              ))}
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleReload}
+                sx={{
+                  marginTop: 1,
+                  color: "white",
+                }}
+              >
+                Reset Search
+              </Button>
+            </Grid>
 
+            {isNoMovies ? (
+              <Grid xl={3}>
+                <Typography sx={{ color: "grey", textAlign: "left" }}>
+                  Nothing Found yet! Keep typing..
+                </Typography>
+              </Grid>
+            ) : (
+              <Grid container>
+                {movies.map((item, index) => (
+                  <Grid item xl={3} mb={3} key={item.id}>
+                    <MovieCard
+                      movie={item}
+                      onClick={() => handleMovieClick(item, index)}
+                      isActive={index === activeMovieIndex}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
             <Box
               sx={{
                 display: "flex",
