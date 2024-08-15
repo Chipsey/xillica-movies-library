@@ -239,7 +239,7 @@ const HomePage = () => {
             <Grid container ml={5} mb={5}>
               <Typography
                 sx={{
-                  marginTop: primaryHeight * 0.5,
+                  marginTop: primaryHeight * 0.3,
                   maxWidth: windowWidth * 0.45,
                 }}
               >
