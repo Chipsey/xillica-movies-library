@@ -30,6 +30,7 @@ import MainDetails from "../components/mainDetails";
 import Torrents from "../components/torrents";
 import Filtering from "../components/filtering";
 import YouTubeEmbed from "../components/youtube";
+import Divider from "../components/divider";
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -200,23 +201,32 @@ const HomePage = () => {
             >
               <MovieHeading activeMovie={activeMovie} />
               <MainDetails activeMovie={activeMovie} />
+              <Divider />
 
-              <Grid container xl={12} ml={5} mb={3}>
+              <Grid container xl={12} ml={5} mb={3} mt={3}>
                 <Typography
                   variant="h6"
-                  sx={{ color: "white", opacity: "0.75" }}
+                  sx={{ color: "white", opacity: "0.3", fontSize: "2rem" }}
                 >
                   Cast
                 </Typography>
               </Grid>
-              <Grid container mb={5}>
+              <Grid container xl={12} mb={5}>
                 {cast.map((item) => (
-                  <Grid item xl={2} mb={3} key={item.id}>
+                  <Grid item xl={1.5} mb={3} key={item.id}>
                     <Cast image={item?.url_small_image} name={item?.name} />
                   </Grid>
                 ))}
               </Grid>
+
               <Torrents activeMovie={activeMovie} />
+              <Typography
+                variant="h6"
+                m={5}
+                sx={{ color: "white", opacity: "0.5", fontSize: "2rem" }}
+              >
+                Trailer
+              </Typography>
               <YouTubeEmbed ytId={activeMovie?.yt_trailer_code} />
               <Grid container mt={2} ml={3} mb={10}>
                 <Typography variant="h5" sx={{ color: "grey" }}>

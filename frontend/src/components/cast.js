@@ -15,8 +15,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
-  width: "50%",
-  height: 100,
+  width: "30%",
+  height: 60,
   borderRadius: "50%",
   objectFit: "cover",
 }));
@@ -27,9 +27,10 @@ const Cast = ({ image, name }) => {
       <StyledCardMedia component="img" image={image} alt={name} />
       <CardContent>
         <Typography
-          variant="h7"
+          variant="body2"
           component="div"
           className="color-white fw-600 opacity-50"
+          sx={{ fontSize: "0.7rem" }}
         >
           {name}
         </Typography>
