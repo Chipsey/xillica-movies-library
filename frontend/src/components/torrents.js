@@ -71,7 +71,7 @@ const Torrents = ({ activeMovie }) => {
               {torrent?.size}
             </Typography>
           </Grid>
-          <Grid xl={4}>
+          <Grid xl={4} sx={{ fontSize: "0.75rem" }}>
             <a href={torrent?.url}>
               <Button
                 variant="contained"
@@ -79,6 +79,7 @@ const Torrents = ({ activeMovie }) => {
                   backgroundColor:
                     torrent?.type === "bluray" ? "green" : "white",
                   color: torrent?.type === "bluray" ? "white" : "black",
+                  fontSize: "0.7rem",
                 }}
               >
                 Download
@@ -90,6 +91,7 @@ const Torrents = ({ activeMovie }) => {
                     torrent?.type === "bluray" ? "green" : "white",
                   color: torrent?.type === "bluray" ? "white" : "black",
                   marginLeft: "10px",
+                  fontSize: "0.7rem",
                 }}
               >
                 Magnet
