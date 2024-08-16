@@ -9,7 +9,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   alignItems: "center",
   textAlign: "center",
   borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[3],
+  boxShadow: theme.shadows[0],
   backgroundColor: "transparent", // Ensure the background color is transparent
   padding: 0, // Remove default padding if needed
 }));
