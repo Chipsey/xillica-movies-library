@@ -6,7 +6,7 @@ export const QUALITY = {
 };
 
 export const MINIMUM_RATING = {
-  title: "Minimum Rating",
+  title: "Min Rating",
   values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 };
 
