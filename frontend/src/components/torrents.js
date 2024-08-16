@@ -115,7 +115,7 @@ const Torrents = ({ activeMovie }) => {
           key={torrent.id}
           sx={{ alignItems: "center" }}
         >
-          <Grid xl={4} mb={3} ml={5}>
+          <Grid xl={4} mb={3} ml={0}>
             <Typography sx={{ color: "white", textAlign: "left" }}>
               {torrent?.quality}
             </Typography>
