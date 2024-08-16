@@ -25,7 +25,7 @@ const DetailCard = ({ movie }) => {
         height: primaryHeight * 35,
         backgroundColor: "rgba(20, 20, 20)",
         opacity: 0.5,
-        filter: "blur(1px)",
+        filter: "blur(0px)",
       }}
     >
       <CardActionArea>

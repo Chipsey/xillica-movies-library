@@ -304,7 +304,7 @@ const HomePage = () => {
               <Button
                 variant="contained"
                 onClick={handleNextPage}
-                disabled={movieCount <= 8}
+                disabled={moviesPerPage * pageNo >= movieCount}
                 sx={{ backgroundColor: "white", color: "black" }}
               >
                 Next
