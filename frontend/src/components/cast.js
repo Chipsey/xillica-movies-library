@@ -23,7 +23,7 @@ const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
 
 const Cast = ({ image, name }) => {
   return (
-    <StyledCard>
+    <StyledCard className="fade-slide-up">
       <StyledCardMedia component="img" image={image} alt={name} />
       <CardContent>
         <Typography

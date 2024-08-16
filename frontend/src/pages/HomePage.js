@@ -185,12 +185,12 @@ const HomePage = () => {
       ) : (
         <Grid container xl={12}>
           <Grid container xl={6}>
-            <div className="z-1">
+            <div className="z-1 fade-slide-up">
               <DetailCard movie={activeMovie}></DetailCard>
             </div>
 
             <div
-              class="position-absolute"
+              class="position-absolute fade-slide-up"
               style={{
                 maxHeight: "90vh",
                 overflowX: "clip",
@@ -211,7 +211,7 @@ const HomePage = () => {
                   Cast
                 </Typography>
               </Grid>
-              <Grid container xl={12} mb={5}>
+              <Grid container xl={12} mb={5} sx={{ height: "8rem" }}>
                 {cast.map((item) => (
                   <Grid item xl={1.5} mb={3} key={item.id}>
                     <Cast image={item?.url_small_image} name={item?.name} />

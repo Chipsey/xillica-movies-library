@@ -743,3 +743,35 @@ code {
     "date_uploaded": "2024-01-05 07:22:54",
     "date_uploaded_unix": 1704435774
 } */
+
+/* Define the fade-in and slide-in animations */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation classes */
+.fade-slide-up {
+  animation: fadeInSlideUp 1s forwards;
+}
+
+.fade-slide-down {
+  animation: fadeInSlideDown 1s forwards;
+}

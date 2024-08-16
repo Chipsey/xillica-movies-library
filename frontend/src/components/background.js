@@ -30,7 +30,7 @@ const Background = ({ children, backgroundImage }) => {
           zIndex: -1,
         }}
       ></div>
-      <div className="home_back_gradient"></div>
+      <div className="home_back_gradient fade-slide-up"></div>
       {children}
     </Box>
   );
