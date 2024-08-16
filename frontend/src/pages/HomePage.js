@@ -64,7 +64,6 @@ const HomePage = () => {
 
   // Data fetching example
   const [options, setOptions] = useState({
-    // quality: QUALITY,
     minimumRating: MINIMUM_RATING,
     genre: GENRE,
     sortBy: SORT_BY,
@@ -77,7 +76,6 @@ const HomePage = () => {
     const fetchData = async () => {
       if (initialLoading) {
         setLoading(true);
-        setInitialLoading(false);
       }
       try {
         const { minimumRating, genre, sortBy } = selectedOptions;
@@ -135,6 +133,7 @@ const HomePage = () => {
         setLoading(false);
       } catch (error) {
         setLoading(false);
+        setInitialLoading(false);
 
         setError(error.message);
       }

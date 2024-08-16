@@ -2,9 +2,19 @@ import React from "react";
 import { Grid, Typography, Box, Button } from "@mui/material";
 
 const windowWidth = window.innerWidth;
-const windowHeight = window.innerHeight;
-const primaryWidth = windowWidth / 30;
-const primaryHeight = windowHeight / 40;
+
+const handleSeedr = async (torrentUrl) => {
+  try {
+    // Copy the torrent URL to the clipboard
+    await navigator.clipboard.writeText(torrentUrl);
+    window.open("https://www.seedr.cc", "_blank");
+    alert(
+      "1 => Press ok and log into seedr.\n2=> Simply press the 'Paste link URL here' Field."
+    );
+  } catch (err) {
+    console.error("Failed to copy text: ", err);
+  }
+};
 
 const Torrents = ({ activeMovie }) => {
   return (
@@ -84,19 +94,30 @@ const Torrents = ({ activeMovie }) => {
               >
                 Download
               </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor:
-                    torrent?.type === "bluray" ? "green" : "white",
-                  color: torrent?.type === "bluray" ? "white" : "black",
-                  marginLeft: "10px",
-                  fontSize: "0.7rem",
-                }}
-              >
-                Magnet
-              </Button>
             </a>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: torrent?.type === "bluray" ? "green" : "white",
+                color: torrent?.type === "bluray" ? "white" : "black",
+                marginLeft: "10px",
+                fontSize: "0.7rem",
+              }}
+            >
+              Magnet
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => handleSeedr(torrent?.url)}
+              sx={{
+                backgroundColor: torrent?.type === "bluray" ? "green" : "white",
+                color: torrent?.type === "bluray" ? "white" : "black",
+                marginLeft: "10px",
+                fontSize: "0.7rem",
+              }}
+            >
+              Seedr
+            </Button>
           </Grid>
           <div
             class="w-100"
