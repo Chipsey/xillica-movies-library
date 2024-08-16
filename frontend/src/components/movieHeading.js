@@ -8,7 +8,7 @@ const primaryHeight = windowHeight / 40;
 
 const MovieHeading = ({ activeMovie }) => {
   return (
-    <Grid container ml={5} mb={5}>
+    <Grid container ml={5}>
       <Typography
         sx={{
           marginTop: primaryHeight * 0.3,

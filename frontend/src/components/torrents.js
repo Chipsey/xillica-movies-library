@@ -1,28 +1,87 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid, Typography, Box, Button } from "@mui/material";
-
-const windowWidth = window.innerWidth;
-
-const handleSeedr = async (torrentUrl) => {
-  try {
-    // Copy the torrent URL to the clipboard
-    await navigator.clipboard.writeText(torrentUrl);
-    window.open("https://www.seedr.cc", "_blank");
-    alert(
-      "1 => Press ok and log into seedr.\n2=> Simply press the 'Paste link URL here' Field."
-    );
-  } catch (err) {
-    console.error("Failed to copy text: ", err);
-  }
-};
+import CustomDialog from "./dialogBox";
 
 const Torrents = ({ activeMovie }) => {
+  const windowWidth = window.innerWidth;
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleSeedr = async (torrentUrl) => {
+    try {
+      await navigator.clipboard.writeText(torrentUrl);
+      handleDialogOpen();
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const createMagnetURL = (torrent) => {
+    const trackers = [
+      "udp://open.demonii.com:1337/announce",
+      "udp://tracker.openbittorrent.com:80",
+      "udp://tracker.coppersurfer.tk:6969",
+      "udp://glotorrents.pw:6969/announce",
+      "udp://tracker.opentrackr.org:1337/announce",
+      "udp://torrent.gresille.org:80/announce",
+      "udp://p4p.arenabg.com:1337",
+      "udp://tracker.leechers-paradise.org:6969",
+    ];
+
+    const magnetURL = `magnet:?xt=urn:btih:${torrent.hash}&dn=${encodeURIComponent(torrent.url)}&${trackers
+      .map((tr) => `tr=${encodeURIComponent(tr)}`)
+      .join("&")}`;
+
+    return magnetURL;
+  };
+
+  const handleMagnet = async (torrent) => {
+    const magnetUrl = createMagnetURL(torrent);
+    console.log(magnetUrl);
+    window.open(magnetUrl);
+  };
+
   return (
-    <Box mb={12}>
+    <Box mb={10} ml={5}>
+      <CustomDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        title="Seedr Instructions"
+        message="Log into Seedr & Simply press the 'Paste link URL here' field."
+        actions={
+          <>
+            <Button onClick={handleDialogClose} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                window.open("https://www.seedr.cc", "_blank");
+                handleDialogClose();
+              }}
+              color="primary"
+              autoFocus
+            >
+              OK
+            </Button>
+          </>
+        }
+      />
+      <Typography
+        variant="h6"
+        sx={{ color: "white", opacity: "0.25", fontSize: "2rem" }}
+      >
+        Torrents
+      </Typography>
       <Grid
         container
         xl={12}
-        ml={5}
         mb={2}
         mt={3}
         sx={{ color: "white", opacity: 0.5 }}
@@ -96,6 +155,9 @@ const Torrents = ({ activeMovie }) => {
               </Button>
             </a>
             <Button
+              onClick={() => {
+                handleMagnet(torrent);
+              }}
               variant="contained"
               sx={{
                 backgroundColor: torrent?.type === "bluray" ? "green" : "white",
