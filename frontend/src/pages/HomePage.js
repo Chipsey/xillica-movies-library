@@ -46,10 +46,10 @@ const HomePage = () => {
   const [isNoMovies, setIsNoMovies] = useState(false);
 
   const [selectedOptions, setSelectedOptions] = useState({
-    quality: "",
+    // quality: "",
     minimumRating: null,
-    genre: "",
-    sortBy: "",
+    genre: null,
+    sortBy: null,
   });
 
   // Function to handle selection change
@@ -64,7 +64,7 @@ const HomePage = () => {
 
   // Data fetching example
   const [options, setOptions] = useState({
-    quality: QUALITY,
+    // quality: QUALITY,
     minimumRating: MINIMUM_RATING,
     genre: GENRE,
     sortBy: SORT_BY,
@@ -80,12 +80,12 @@ const HomePage = () => {
         setInitialLoading(false);
       }
       try {
-        const { quality, minimumRating, genre, sortBy } = selectedOptions;
+        const { minimumRating, genre, sortBy } = selectedOptions;
         const queryParams = new URLSearchParams({
           limit: moviesPerPage,
           page: pageNo,
           query_term: query,
-          quality: quality || "",
+          // quality: quality || "",
           minimum_rating: minimumRating || "",
           genre: genre || "",
           sort_by: sortBy || "date_added",
