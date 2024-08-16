@@ -17,11 +17,11 @@ const MovieCard = ({ movie, onClick, isActive }) => {
     <Card
       onClick={onClick}
       sx={{
-        width: primaryWidth * 2.8,
+        // width: primaryWidth * 3.5,
         margin: "auto",
         boxShadow: 3,
         borderRadius: 3,
-        height: primaryWidth * 4.5,
+        // height: primaryWidth * 4.5,
         backgroundColor: isActive
           ? "rgba(50, 50, 50, 0.8)"
           : "rgba(15, 15, 15, 0.8)",
