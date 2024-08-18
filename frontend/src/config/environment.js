@@ -1,9 +1,5 @@
-export const TMDB_API_KEY = "f5885176fb03411f28435804517e6abb";
-
-// export const QUALITY = {
-//   title: "Quality",
-//   values: ["480p", "720p", "1080p", "1080p.x265", "2160p", "3D"],
-// };
+export const TMDB_API_KEY = "abc";
+export const OMDB_API_KEY = "abc";
 
 export const MINIMUM_RATING = {
   title: "Min Rating",

@@ -726,22 +726,22 @@ code {
   background: #1e1e1e;
 }
 
-/* 
-{
-    "url": "https://yts.mx/torrent/download/28308F83DB9FD43BE0E7AC445F4A23A06755DC0A",
-    "hash": "28308F83DB9FD43BE0E7AC445F4A23A06755DC0A",
-    "quality": "720p",
-    "type": "bluray",
-    "is_repack": "0",
-    "video_codec": "x264",
-    "bit_depth": "8",
-    "audio_channels": "2.0",
-    "seeds": 100,
-    "peers": 11,
-    "size": "842.21 MB",
-    "size_bytes": 883121193,
-    "date_uploaded": "2024-01-05 07:22:54",
-    "date_uploaded_unix": 1704435774
+/* {
+    "id": 1469305,
+    "hash": "a017ac9bf02de9e36f1f9177bdb60612186b0b0d",
+    "filename": "Game.of.Thrones.S01E10.2160p.UHD.BluRay.x265-SCOTLUHD[eztv.io].mkv",
+    "torrent_url": "https://zoink.ch/mirror/Game of Thrones S01E10 2160p UHD BluRay x265-SCOTLUHD [eztv.io] [alt].torrent",
+    "magnet_url": "magnet:?xt=urn:btih:a017ac9bf02de9e36f1f9177bdb60612186b0b0d&dn=Game.of.Thrones.S01E10.2160p.UHD.BluRay.x265-SCOTLUHD%5Beztv%5D&tr=udp://tracker.opentrackr.org:1337/announce&tr=udp://9.rarbg.me:2970/announce&tr=udp://p4p.arenabg.com:1337/announce&tr=udp://tracker.torrent.eu.org:451/announce&tr=udp://tracker.dler.org:6969/announce&tr=udp://open.stealth.si:80/announce&tr=udp://ipv4.tracker.harry.lu:80/announce&tr=https://opentracker.i2p.rocks:443/announce",
+    "title": "Game of Thrones S01E10 2160p UHD BluRay x265-SCOTLUHD EZTV",
+    "imdb_id": "0944947",
+    "season": "1",
+    "episode": "10",
+    "small_screenshot": "//ezimg.ch/thumbs/game-of-thrones-s01e10-2160p-uhd-bluray-x265-scotluhd-small.jpg",
+    "large_screenshot": "//ezimg.ch/thumbs/game-of-thrones-s01e10-2160p-uhd-bluray-x265-scotluhd-large.jpg",
+    "seeds": 13,
+    "peers": 2,
+    "date_released_unix": 1594711151,
+    "size_bytes": "10387327388"
 } */
 
 /* Define the fade-in and slide-in animations */
