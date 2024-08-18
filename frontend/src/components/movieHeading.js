@@ -25,10 +25,11 @@ const MovieHeading = ({ activeMovie }) => {
           </div>
         </div>
         <h4
-          class="color-white w-100 mt-3 mb-3 fw-100"
+          class="color-white w-100 mt-3 mb-3 fw-300 opacity-75"
           style={{
             maxHeight: "170px",
             overflowY: "auto",
+            fontSize: "0.75rem",
           }}
         >
           {activeMovie?.description_full}

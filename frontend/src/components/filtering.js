@@ -64,7 +64,15 @@ const Filtering = ({
               }}
               fullWidth
             >
-              <InputLabel id={`${key}-label`} sx={{ fontSize: "0.75rem" }}>
+              <InputLabel
+                id={`${key}-label`}
+                sx={{
+                  fontSize: "0.75rem",
+                  "&.Mui-focused": {
+                    color: "white", // Change the color to white when the label is focused
+                  },
+                }}
+              >
                 {options[key].title}
               </InputLabel>
               <Select

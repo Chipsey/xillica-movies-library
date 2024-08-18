@@ -1,27 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Grid,
-  Typography,
-  CircularProgress,
-  Box,
-  Button,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
+import { Grid, Typography, CircularProgress, Box, Button } from "@mui/material";
 import { fetchItems } from "../api/api";
 import { LIST_MOVIES, MOVIE_DETAILS } from "../config/apiEndpoints";
 import Background from "../components/background";
 import MovieCard from "../components/movieCard";
 import DetailCard from "../components/detail-card";
 
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
-import "../styles/homeStyles.css";
-import "../index.css";
-import { GENRE, MINIMUM_RATING, QUALITY, SORT_BY } from "../config/environment";
+import { GENRE, MINIMUM_RATING, SORT_BY } from "../config/environment";
 import Cast from "../components/cast";
 import LoadingScreen from "../components/loadingScreen";
 import ErrorScreen from "../components/errorScreen";
@@ -32,6 +22,9 @@ import Filtering from "../components/filtering";
 import YouTubeEmbed from "../components/youtube";
 import Divider from "../components/divider";
 
+import "../styles/homeStyles.css";
+import "../index.css";
+
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -40,14 +33,14 @@ const HomePage = () => {
   const [activeMovieIndex, setActiveMovieIndex] = useState(0);
   const [activeMovieIMDBID, setActiveMovieIMDBID] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [pageNo, setPageNo] = useState(1);
+  const [finalPageNo, setFinalPageNo] = useState(1);
   const [movieCount, setMovieCount] = useState(null);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
   const [isNoMovies, setIsNoMovies] = useState(false);
 
   const [selectedOptions, setSelectedOptions] = useState({
-    // quality: "",
     minimumRating: null,
     genre: null,
     sortBy: null,
@@ -71,7 +64,6 @@ const HomePage = () => {
   });
 
   const moviesPerPage = 8;
-  const [pageNo, setPageNo] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +76,6 @@ const HomePage = () => {
           limit: moviesPerPage,
           page: pageNo,
           query_term: query,
-          // quality: quality || "",
           minimum_rating: minimumRating || "",
           genre: genre || "",
           sort_by: sortBy || "date_added",
@@ -101,6 +92,12 @@ const HomePage = () => {
           setActiveMovieIndex(0);
           setActiveMovieIMDBID(moviesList?.data?.movies[0]?.id);
           setMovieCount(moviesList?.data?.movie_count);
+          setFinalPageNo(
+            movieCount % moviesPerPage != 0
+              ? Math.floor(movieCount / moviesPerPage) + 1
+              : Math.floor(movieCount / moviesPerPage)
+          );
+          console.log(finalPageNo);
         } else {
           setIsNoMovies(true);
         }
@@ -159,6 +156,15 @@ const HomePage = () => {
 
   const handleNextPage = () => {
     setPageNo((prevPageNo) => prevPageNo + 1);
+    setActiveMovieIndex(0);
+  };
+
+  const handleFinalPage = () => {
+    setPageNo(
+      movieCount % moviesPerPage != 0
+        ? Math.floor(movieCount / moviesPerPage) + 1
+        : Math.floor(movieCount / moviesPerPage)
+    );
     setActiveMovieIndex(0);
   };
 
@@ -272,7 +278,16 @@ const HomePage = () => {
                 </Typography>
               </Grid>
             ) : (
-              <Grid container xl={12} spacing={2}>
+              <Grid
+                container
+                xl={12}
+                spacing={2}
+                style={{
+                  maxHeight: "60vh",
+                  overflowX: "clip",
+                  overflowY: "auto",
+                }}
+              >
                 {movies.map((item, index) => (
                   <Grid item xl={3} mb={1} key={item.id}>
                     <MovieCard
@@ -298,25 +313,47 @@ const HomePage = () => {
                 variant="contained"
                 onClick={() => setPageNo(1)}
                 disabled={pageNo === 1}
-                sx={{ marginRight: 2, backgroundColor: "grey", color: "black" }}
+                sx={{ marginRight: 1, backgroundColor: "grey", color: "black" }}
               >
-                <ArrowBackIosIcon />
+                <KeyboardDoubleArrowLeftIcon />
               </Button>
               <Button
                 variant="contained"
                 onClick={handlePreviousPage}
                 disabled={pageNo === 1}
-                sx={{ marginRight: 1, backgroundColor: "grey", color: "black" }}
+                sx={{
+                  backgroundColor: "white",
+                  color: "black",
+                }}
               >
-                Previous
+                <KeyboardArrowLeftIcon />
               </Button>
+              <Typography
+                ml={1}
+                mr={1}
+                sx={{ color: "grey", textAlign: "center", fontSize: "0.7rem" }}
+              >
+                Page {pageNo}
+              </Typography>
               <Button
                 variant="contained"
                 onClick={handleNextPage}
                 disabled={moviesPerPage * pageNo >= movieCount}
-                sx={{ backgroundColor: "white", color: "black" }}
+                sx={{
+                  marginRight: 1,
+                  backgroundColor: "white",
+                  color: "black",
+                }}
               >
-                Next
+                <KeyboardArrowRightIcon />
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleFinalPage}
+                disabled={moviesPerPage * pageNo >= movieCount}
+                sx={{ backgroundColor: "grey", color: "black" }}
+              >
+                <KeyboardDoubleArrowRightIcon />
               </Button>
               {loading && <CircularProgress />}
             </Box>
