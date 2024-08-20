@@ -50,6 +50,7 @@ const TvPage = () => {
   const [torrentCount, setTorrentCount] = useState(0);
   const [season, setSeason] = useState("");
   const [episode, setEpisode] = useState("");
+  const [isLoadTorrents, setIsLoadTorrents] = useState(false);
   const moviesPerPage = 8;
   const torrentsPerPageInSeries = 100;
 
@@ -87,6 +88,7 @@ const TvPage = () => {
 
     fetchData();
   }, [query, pageNo]);
+
   useEffect(() => {
     const fetchMovieDetails = async () => {
       if (initialLoading) {
@@ -95,10 +97,32 @@ const TvPage = () => {
       }
       setCast([]);
       try {
+        setIsLoadTorrents(false);
+        setTorrents(null);
+        setFilteredTorrents(null);
         const movieDetails = await fetchItems(
           `${OMDB_LIST}&i=${activeMovieIMDBID}&plot=full`
         );
 
+        setActiveMovie(movieDetails);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        setInitialLoading(false);
+        setError(error.message);
+      }
+    };
+
+    fetchMovieDetails();
+  }, [activeMovieIMDBID]);
+
+  useEffect(() => {
+    const fetchTorrentDetails = async () => {
+      if (initialLoading) {
+        setLoading(true);
+        setInitialLoading(false);
+      }
+      try {
         const allTorrents = [];
         let currentPage = 1;
         let totalFetchedTorrents = 0;
@@ -121,7 +145,7 @@ const TvPage = () => {
         setFilteredTorrents(allTorrents);
         console.log(allTorrents.length);
         setTorrentCount(totalTorrentCount);
-        setActiveMovie(movieDetails);
+
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -130,8 +154,8 @@ const TvPage = () => {
       }
     };
 
-    fetchMovieDetails();
-  }, [activeMovieIMDBID]);
+    fetchTorrentDetails();
+  }, [isLoadTorrents]);
 
   const handleMovieClick = async (movie, index) => {
     setActiveMovieIndex(index);
@@ -217,86 +241,9 @@ const TvPage = () => {
               <TVHeading activeMovie={activeMovie} />
               <MainDetailsTV activeMovie={activeMovie} />
               <Divider />
-              <Grid container mt={5} mb={3} ml={3} xl={8} spacing={1}>
-                <Grid item xl={3}>
-                  <FormControl
-                    variant="filled"
-                    sx={{
-                      backgroundColor: "grey",
-                      borderRadius: "10px",
-                      fontSize: "0.75rem",
-                    }}
-                    fullWidth
-                  >
-                    <InputLabel
-                      sx={{
-                        fontSize: "0.75rem",
-                        "&.Mui-focused": {
-                          color: "white",
-                        },
-                      }}
-                    >
-                      Season
-                    </InputLabel>
-                    <FilledInput
-                      type="number"
-                      value={season}
-                      onChange={(e) => setSeason(e.target.value)}
-                      sx={{
-                        fontSize: "0.75rem",
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
 
-                <Grid item xl={3}>
-                  <FormControl
-                    variant="filled"
-                    sx={{
-                      backgroundColor: "grey",
-                      borderRadius: "10px",
-                      fontSize: "0.75rem",
-                    }}
-                    fullWidth
-                  >
-                    <InputLabel
-                      sx={{
-                        fontSize: "0.75rem",
-                        "&.Mui-focused": {
-                          color: "white",
-                        },
-                      }}
-                    >
-                      Episode
-                    </InputLabel>
-                    <FilledInput
-                      type="number"
-                      value={episode}
-                      onChange={(e) => setEpisode(e.target.value)}
-                      sx={{
-                        fontSize: "0.75rem",
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-
-                <Grid item xl={3}>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    sx={{
-                      height: "100%",
-                      fontSize: "0.75rem",
-                      color: "white",
-                    }}
-                    onClick={() => filterTorrents(season, episode)}
-                    fullWidth
-                    disabled={season == "" || episode == ""}
-                  >
-                    Search
-                  </Button>
-                </Grid>
-                <Grid item xl={3}>
+              {!isLoadTorrents ? (
+                <Grid item xl={2} m={5}>
                   <Button
                     variant="contained"
                     sx={{
@@ -305,15 +252,111 @@ const TvPage = () => {
                       color: "white",
                       backgroundColor: "grey",
                     }}
-                    onClick={() => resetFilterTorrents()}
+                    onClick={() => setIsLoadTorrents(true)}
                     fullWidth
-                    disabled={season == "" || episode == ""}
                   >
-                    Reset
+                    Load Torrents
                   </Button>
                 </Grid>
-              </Grid>
-              <TorrentsTV torrents={filteredTorrents} />
+              ) : (
+                <Grid container mt={5} mb={3} ml={3} xl={8} spacing={1}>
+                  <Grid item xl={3}>
+                    <FormControl
+                      variant="filled"
+                      sx={{
+                        backgroundColor: "grey",
+                        borderRadius: "10px",
+                        fontSize: "0.75rem",
+                      }}
+                      fullWidth
+                    >
+                      <InputLabel
+                        sx={{
+                          fontSize: "0.75rem",
+                          "&.Mui-focused": {
+                            color: "white",
+                          },
+                        }}
+                      >
+                        Season
+                      </InputLabel>
+                      <FilledInput
+                        type="number"
+                        value={season}
+                        onChange={(e) => setSeason(e.target.value)}
+                        sx={{
+                          fontSize: "0.75rem",
+                        }}
+                      />
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xl={3}>
+                    <FormControl
+                      variant="filled"
+                      sx={{
+                        backgroundColor: "grey",
+                        borderRadius: "10px",
+                        fontSize: "0.75rem",
+                      }}
+                      fullWidth
+                    >
+                      <InputLabel
+                        sx={{
+                          fontSize: "0.75rem",
+                          "&.Mui-focused": {
+                            color: "white",
+                          },
+                        }}
+                      >
+                        Episode
+                      </InputLabel>
+                      <FilledInput
+                        type="number"
+                        value={episode}
+                        onChange={(e) => setEpisode(e.target.value)}
+                        sx={{
+                          fontSize: "0.75rem",
+                        }}
+                      />
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xl={3}>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      sx={{
+                        height: "100%",
+                        fontSize: "0.75rem",
+                        color: "white",
+                      }}
+                      onClick={() => filterTorrents(season, episode)}
+                      fullWidth
+                      disabled={season == "" || episode == ""}
+                    >
+                      Search
+                    </Button>
+                  </Grid>
+                  <Grid item xl={3}>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        height: "100%",
+                        fontSize: "0.75rem",
+                        color: "white",
+                        backgroundColor: "grey",
+                      }}
+                      onClick={() => resetFilterTorrents()}
+                      fullWidth
+                      disabled={season == "" || episode == ""}
+                    >
+                      Reset
+                    </Button>
+                  </Grid>
+                </Grid>
+              )}
+              <TorrentsTV torrents={filteredTorrents} isLoad={isLoadTorrents} />
             </div>
           </Grid>
           <Grid

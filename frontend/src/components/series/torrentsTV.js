@@ -4,7 +4,7 @@ import CustomDialog from "../dialogBox";
 import { SERIES_DETAILS } from "../../config/apiEndpoints";
 import { fetchItems } from "../../api/api";
 
-const TorrentsTV = ({ torrents }) => {
+const TorrentsTV = ({ torrents, isLoad }) => {
   const windowWidth = window.innerWidth;
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -92,9 +92,14 @@ const TorrentsTV = ({ torrents }) => {
           opacity: "0.4",
         }}
       ></div>
-      {torrents == null || torrents == undefined || torrents == "" ? (
+      {(torrents == null || torrents == undefined || torrents == "") &&
+      isLoad ? (
         <Typography sx={{ fontSize: "0.75rem", color: "white" }}>
           Oops! No Torrents Found.
+        </Typography>
+      ) : !isLoad ? (
+        <Typography sx={{ fontSize: "0.75rem", color: "white" }}>
+          Enter Season and Episode.
         </Typography>
       ) : (
         torrents.map((torrent) => (
