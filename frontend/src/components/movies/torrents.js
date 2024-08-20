@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, Typography, Box, Button } from "@mui/material";
-import CustomDialog from "./dialogBox";
+import CustomDialog from "../dialogBox";
 
 const Torrents = ({ activeMovie }) => {
   const windowWidth = window.innerWidth;

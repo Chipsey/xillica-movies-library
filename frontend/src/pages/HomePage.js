@@ -3,8 +3,8 @@ import { Grid, Typography, CircularProgress, Box, Button } from "@mui/material";
 import { fetchItems } from "../api/api";
 import { LIST_MOVIES, MOVIE_DETAILS } from "../config/apiEndpoints";
 import Background from "../components/background";
-import MovieCard from "../components/movieCard";
-import DetailCard from "../components/detail-card";
+import MovieCard from "../components/movies/movieCard";
+import DetailCard from "../components/movies/detail-card";
 
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
@@ -12,13 +12,13 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 import { GENRE, MINIMUM_RATING, SORT_BY } from "../config/environment";
-import Cast from "../components/cast";
+import Cast from "../components/movies/cast";
 import LoadingScreen from "../components/loadingScreen";
 import ErrorScreen from "../components/errorScreen";
-import MovieHeading from "../components/movieHeading";
-import MainDetails from "../components/mainDetails";
-import Torrents from "../components/torrents";
-import Filtering from "../components/filtering";
+import MovieHeading from "../components/movies/movieHeading";
+import MainDetails from "../components/movies/mainDetails";
+import Torrents from "../components/movies/torrents";
+import Filtering from "../components/movies/filtering";
 import YouTubeEmbed from "../components/youtube";
 import Divider from "../components/divider";
 
@@ -85,7 +85,7 @@ const HomePage = () => {
 
         if (
           moviesList?.data?.movie_count > 0 &&
-          moviesList?.data?.movies != null
+          moviesList?.data?.movies !== null
         ) {
           setIsNoMovies(false);
           setMovies(moviesList?.data?.movies);
@@ -93,7 +93,7 @@ const HomePage = () => {
           setActiveMovieIMDBID(moviesList?.data?.movies[0]?.id);
           setMovieCount(moviesList?.data?.movie_count);
           setFinalPageNo(
-            movieCount % moviesPerPage != 0
+            movieCount % moviesPerPage !== 0
               ? Math.floor(movieCount / moviesPerPage) + 1
               : Math.floor(movieCount / moviesPerPage)
           );
@@ -161,7 +161,7 @@ const HomePage = () => {
 
   const handleFinalPage = () => {
     setPageNo(
-      movieCount % moviesPerPage != 0
+      movieCount % moviesPerPage !== 0
         ? Math.floor(movieCount / moviesPerPage) + 1
         : Math.floor(movieCount / moviesPerPage)
     );
@@ -177,6 +177,14 @@ const HomePage = () => {
 
   const handleReload = () => {
     window.location.reload();
+  };
+
+  const handleResetFilters = () => {
+    setSelectedOptions({
+      minimumRating: null,
+      genre: null,
+      sortBy: null,
+    });
   };
 
   const windowWidth = window.innerWidth;
@@ -267,7 +275,7 @@ const HomePage = () => {
                 selectedOptions={selectedOptions}
                 handleSearch={handleSearch}
                 handleSelectionChange={handleSelectionChange}
-                handleReload={handleReload}
+                handleReload={handleResetFilters}
               />
             </Grid>
 

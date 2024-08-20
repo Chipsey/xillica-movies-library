@@ -112,7 +112,7 @@ const Filtering = ({
             }}
             disabled={allOptionsEmpty}
           >
-            Reset Search
+            Clear All Filters
           </Button>
         </Grid>
       </Grid>

@@ -6,7 +6,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import "../styles/movieCardStyles.css";
+import "../../styles/movieCardStyles.css";
 
 const DetailCardTV = ({ movie }) => {
   console.log(movie);

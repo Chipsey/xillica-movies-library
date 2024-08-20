@@ -1,40 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, CircularProgress, Box, Button } from "@mui/material";
-import { fetchItems } from "../api/api";
 import {
-  LIST_MOVIES,
-  MOVIE_DETAILS,
-  OMDB_LIST,
-  SERIES_DETAILS,
-} from "../config/apiEndpoints";
+  Grid,
+  Typography,
+  CircularProgress,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  FilledInput,
+} from "@mui/material";
+import { fetchItems } from "../api/api";
+import { OMDB_LIST, SERIES_DETAILS } from "../config/apiEndpoints";
 import Background from "../components/background";
-import MovieCard from "../components/movieCard";
-import DetailCard from "../components/detail-card";
 
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
-import { GENRE, MINIMUM_RATING, SORT_BY } from "../config/environment";
-import Cast from "../components/cast";
 import LoadingScreen from "../components/loadingScreen";
 import ErrorScreen from "../components/errorScreen";
-import MovieHeading from "../components/movieHeading";
-import MainDetails from "../components/mainDetails";
-import Torrents from "../components/torrents";
-import Filtering from "../components/filtering";
-import YouTubeEmbed from "../components/youtube";
 import Divider from "../components/divider";
 
 import "../styles/homeStyles.css";
 import "../index.css";
-import FilteringTV from "../components/filtering-tv";
-import TVHeading from "../components/tvHeading";
-import TvCard from "../components/tvCard";
-import MainDetailsTV from "../components/mainDetailsTV";
-import TorrentsTV from "../components/torrentsTV";
-import DetailCardTV from "../components/detail-cardTV";
+import FilteringTV from "../components/series/filtering-tv";
+import TVHeading from "../components/series/tvHeading";
+import TvCard from "../components/series/tvCard";
+import MainDetailsTV from "../components/series/mainDetailsTV";
+import TorrentsTV from "../components/series/torrentsTV";
+import DetailCardTV from "../components/series/detail-cardTV";
 
 const TvPage = () => {
   const [movies, setMovies] = useState([]);
@@ -42,15 +37,19 @@ const TvPage = () => {
   const [cast, setCast] = useState([]);
   const [activeMovie, setActiveMovie] = useState(null);
   const [activeMovieIndex, setActiveMovieIndex] = useState(0);
-  const [activeMovieIMDBID, setActiveMovieIMDBID] = useState("tt0944947");
+  const [activeMovieIMDBID, setActiveMovieIMDBID] = useState("tt4574334");
   const [loading, setLoading] = useState(true);
   const [pageNo, setPageNo] = useState(1);
   const [finalPageNo, setFinalPageNo] = useState(1);
   const [movieCount, setMovieCount] = useState(null);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("stranger");
   const [error, setError] = useState(null);
   const [isNoMovies, setIsNoMovies] = useState(false);
   const [torrents, setTorrents] = useState(null);
+  const [filteredTorrents, setFilteredTorrents] = useState(null);
+  const [torrentCount, setTorrentCount] = useState(0);
+  const [season, setSeason] = useState("");
+  const [episode, setEpisode] = useState("");
   const moviesPerPage = 8;
   const torrentsPerPageInSeries = 100;
 
@@ -88,7 +87,6 @@ const TvPage = () => {
 
     fetchData();
   }, [query, pageNo]);
-
   useEffect(() => {
     const fetchMovieDetails = async () => {
       if (initialLoading) {
@@ -100,26 +98,40 @@ const TvPage = () => {
         const movieDetails = await fetchItems(
           `${OMDB_LIST}&i=${activeMovieIMDBID}&plot=full`
         );
-        const torrentList = await fetchItems(
-          `${SERIES_DETAILS}?imdb_id=${extractNumber(activeMovieIMDBID)}&limit=${torrentsPerPageInSeries}&page=1`
-        );
-        setTorrents(torrentList?.torrents);
+
+        const allTorrents = [];
+        let currentPage = 1;
+        let totalFetchedTorrents = 0;
+        let totalTorrentCount = 0;
+
+        do {
+          const torrentList = await fetchItems(
+            `${SERIES_DETAILS}?imdb_id=${extractNumber(activeMovieIMDBID)}&limit=100&page=${currentPage}`
+          );
+
+          const currentTorrents = torrentList?.torrents || [];
+          totalTorrentCount = torrentList?.torrents_count || 0;
+
+          allTorrents.push(...currentTorrents);
+          totalFetchedTorrents += currentTorrents.length;
+          currentPage++;
+        } while (totalFetchedTorrents < totalTorrentCount);
+
+        setTorrents(allTorrents);
+        setFilteredTorrents(allTorrents);
+        console.log(allTorrents.length);
+        setTorrentCount(totalTorrentCount);
         setActiveMovie(movieDetails);
         setLoading(false);
       } catch (error) {
         setLoading(false);
         setInitialLoading(false);
-
         setError(error.message);
       }
     };
 
     fetchMovieDetails();
   }, [activeMovieIMDBID]);
-
-  const handleSearchClick = () => {
-    // setSearch(true);
-  };
 
   const handleMovieClick = async (movie, index) => {
     setActiveMovieIndex(index);
@@ -142,7 +154,7 @@ const TvPage = () => {
 
   const handleFinalPage = () => {
     setPageNo(
-      movieCount % moviesPerPage != 0
+      movieCount % moviesPerPage !== 0
         ? Math.floor(movieCount / moviesPerPage) + 1
         : Math.floor(movieCount / moviesPerPage)
     );
@@ -158,6 +170,22 @@ const TvPage = () => {
 
   const handleReload = () => {
     window.location.reload();
+  };
+
+  const filterTorrents = (season, episode) => {
+    if (torrents) {
+      setFilteredTorrents(
+        torrents.filter(
+          (torrent) => torrent.season === season && torrent.episode === episode
+        )
+      );
+    }
+  };
+
+  const resetFilterTorrents = () => {
+    setFilteredTorrents(torrents);
+    setSeason("");
+    setEpisode("");
   };
 
   const windowWidth = window.innerWidth;
@@ -189,7 +217,103 @@ const TvPage = () => {
               <TVHeading activeMovie={activeMovie} />
               <MainDetailsTV activeMovie={activeMovie} />
               <Divider />
-              <TorrentsTV torrents={torrents} />
+              <Grid container mt={5} mb={3} ml={3} xl={8} spacing={1}>
+                <Grid item xl={3}>
+                  <FormControl
+                    variant="filled"
+                    sx={{
+                      backgroundColor: "grey",
+                      borderRadius: "10px",
+                      fontSize: "0.75rem",
+                    }}
+                    fullWidth
+                  >
+                    <InputLabel
+                      sx={{
+                        fontSize: "0.75rem",
+                        "&.Mui-focused": {
+                          color: "white",
+                        },
+                      }}
+                    >
+                      Season
+                    </InputLabel>
+                    <FilledInput
+                      type="number"
+                      value={season}
+                      onChange={(e) => setSeason(e.target.value)}
+                      sx={{
+                        fontSize: "0.75rem",
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+
+                <Grid item xl={3}>
+                  <FormControl
+                    variant="filled"
+                    sx={{
+                      backgroundColor: "grey",
+                      borderRadius: "10px",
+                      fontSize: "0.75rem",
+                    }}
+                    fullWidth
+                  >
+                    <InputLabel
+                      sx={{
+                        fontSize: "0.75rem",
+                        "&.Mui-focused": {
+                          color: "white",
+                        },
+                      }}
+                    >
+                      Episode
+                    </InputLabel>
+                    <FilledInput
+                      type="number"
+                      value={episode}
+                      onChange={(e) => setEpisode(e.target.value)}
+                      sx={{
+                        fontSize: "0.75rem",
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+
+                <Grid item xl={3}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{
+                      height: "100%",
+                      fontSize: "0.75rem",
+                      color: "white",
+                    }}
+                    onClick={() => filterTorrents(season, episode)}
+                    fullWidth
+                    disabled={season == "" || episode == ""}
+                  >
+                    Search
+                  </Button>
+                </Grid>
+                <Grid item xl={3}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      height: "100%",
+                      fontSize: "0.75rem",
+                      color: "white",
+                      backgroundColor: "grey",
+                    }}
+                    onClick={() => resetFilterTorrents()}
+                    fullWidth
+                    disabled={season == "" || episode == ""}
+                  >
+                    Reset
+                  </Button>
+                </Grid>
+              </Grid>
+              <TorrentsTV torrents={filteredTorrents} />
             </div>
           </Grid>
           <Grid
@@ -216,7 +340,7 @@ const TvPage = () => {
               <FilteringTV handleSearch={handleSearch} />
             </Grid>
 
-            {isNoMovies ? (
+            {isNoMovies && initialLoading ? (
               <Grid xl={12}>
                 <Typography sx={{ color: "grey", textAlign: "left" }}>
                   Nothing Found yet! Keep typing..
@@ -273,13 +397,13 @@ const TvPage = () => {
               >
                 <KeyboardArrowLeftIcon />
               </Button>
-              <Typography
+              {/* <Typography
                 ml={1}
                 mr={1}
                 sx={{ color: "grey", textAlign: "center", fontSize: "0.7rem" }}
               >
                 Page {pageNo}
-              </Typography>
+              </Typography> */}
               <Button
                 variant="contained"
                 onClick={handleNextPage}
