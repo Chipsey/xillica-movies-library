@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Typography, Box, Button } from "@mui/material";
-import CustomDialog from "./dialogBox";
-import { SERIES_DETAILS } from "../config/apiEndpoints";
-import { fetchItems } from "../api/api";
+import CustomDialog from "../dialogBox";
+import { SERIES_DETAILS } from "../../config/apiEndpoints";
+import { fetchItems } from "../../api/api";
 
 const TorrentsTV = ({ torrents }) => {
   const windowWidth = window.innerWidth;
@@ -92,8 +92,10 @@ const TorrentsTV = ({ torrents }) => {
           opacity: "0.4",
         }}
       ></div>
-      {torrents == null ? (
-        <Typography>Loading</Typography>
+      {torrents == null || torrents == undefined || torrents == "" ? (
+        <Typography sx={{ fontSize: "0.75rem", color: "white" }}>
+          Oops! No Torrents Found.
+        </Typography>
       ) : (
         torrents.map((torrent) => (
           <Grid
@@ -105,10 +107,7 @@ const TorrentsTV = ({ torrents }) => {
           >
             <Grid xl={2} mb={3} ml={0}>
               <Typography sx={{ color: "white", textAlign: "left" }}>
-                Season {torrent?.season}
-              </Typography>
-              <Typography sx={{ color: "white", textAlign: "left" }}>
-                Episode {torrent?.episode}
+                S{torrent?.season} E{torrent?.episode}
               </Typography>
             </Grid>
             <Grid xl={4} mb={3} ml={0}>

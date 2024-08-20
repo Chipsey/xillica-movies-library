@@ -6,10 +6,9 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import "../styles/movieCardStyles.css";
+import "../../styles/movieCardStyles.css";
 
-const MovieCard = ({ movie, onClick, isActive }) => {
-  console.log(movie);
+const TvCard = ({ movie, onClick, isActive }) => {
   const windowWidth = window.innerWidth;
   const primaryWidth = windowWidth / 30;
 
@@ -31,8 +30,8 @@ const MovieCard = ({ movie, onClick, isActive }) => {
         <CardMedia
           component="img"
           height={primaryWidth * 3}
-          image={movie?.large_cover_image}
-          alt={movie?.title_english}
+          image={movie?.Poster}
+          alt={movie?.Title}
         />
         <CardContent
           sx={{
@@ -50,7 +49,7 @@ const MovieCard = ({ movie, onClick, isActive }) => {
                 overflowY: "auto",
               }}
             >
-              {movie?.title_english}
+              {movie?.Title}
             </div>
           </Typography>
           <Typography
@@ -62,11 +61,11 @@ const MovieCard = ({ movie, onClick, isActive }) => {
             }}
           >
             <div class="d-flex justify-content-between">
-              <div className="card_movie_year font-small">{movie?.year}</div>
-              <div className="font-small align-content-center ">
+              <div className="card_movie_year font-small">{movie?.Year}</div>
+              {/* <div className="font-small align-content-center ">
                 <span class="opacity-25"> IMDB</span>
                 <span class="color-orange opacity-100"> {movie?.rating}</span>
-              </div>
+              </div> */}
             </div>
           </Typography>
         </CardContent>
@@ -75,4 +74,4 @@ const MovieCard = ({ movie, onClick, isActive }) => {
   );
 };
 
-export default MovieCard;
+export default TvCard;

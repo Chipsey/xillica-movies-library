@@ -1,5 +1,5 @@
-export const TMDB_API_KEY = "abc";
-export const OMDB_API_KEY = "abc";
+export const TMDB_API_KEY = "f5885176fb03411f28435804517e6abb";
+export const OMDB_API_KEY = "7a8441d3";
 
 export const MINIMUM_RATING = {
   title: "Min Rating",
