@@ -1,8 +1,10 @@
 import { useSelector } from "react-redux";
+import localStorageService from "../utils/localStorage";
 
 const useAuth = () => {
-  const user = useSelector((state) => state.auth.user);
+  const user = localStorageService.getItem("token");
   const isLoggedIn = Boolean(user);
+  console.log(isLoggedIn);
 
   return { user, isLoggedIn };
 };

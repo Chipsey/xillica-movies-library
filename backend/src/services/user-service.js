@@ -44,7 +44,13 @@ const loginUser = async ({ email, password }) => {
     expiresIn: "1h",
   });
 
-  return token;
+  response = {
+    token: token,
+    userName: user.name,
+    userEmail: user.email,
+  };
+
+  return response;
 };
 
 const getAllUsers = async () => {

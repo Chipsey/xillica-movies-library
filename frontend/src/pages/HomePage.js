@@ -261,12 +261,37 @@ const HomePage = () => {
             }}
           >
             {/* Heading */}
-            <h1 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
-              Xillica Movies
-            </h1>
-            <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
-              Surf Your Favorite Movies
-            </h4>
+            <Grid container xl={10}>
+              <Grid xl={4}>
+                <h1 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
+                  Xillica Movies
+                </h1>
+                <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
+                  Surf Your Favorite Movies
+                </h4>
+              </Grid>
+              <Grid xl={4}>
+                <h3 class="z0 color-white opacity-25 w-100 fw-700 text-center m-0 align-content-end">
+                  Xillica Series
+                </h3>
+                <h4 class="z0 color-white opacity-25 w-100 fw-200 text-center bg font-small m-0">
+                  Surf Your Favorite Series
+                </h4>
+              </Grid>
+              <Grid xl={2}>
+                <h3 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
+                  Profile
+                </h3>
+                <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
+                  Settings
+                </h4>
+              </Grid>
+              <Grid xl={2}>
+                <h3 class="z0 color-white w-100 fw-700 text-center m-0 ">
+                  Log Out
+                </h3>
+              </Grid>
+            </Grid>
             {/* Heading */}
 
             <Grid xl={12}>

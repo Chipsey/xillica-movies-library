@@ -4,15 +4,45 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import PrivateRoute from "./PrivateRoute";
 import TvPage from "../pages/TvPage";
+import InversePrivateRoute from "./InversePrivateRoute";
+// import FavoritesPage from "../pages/FavoritesPage"; // Assuming you have this page
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/tv" element={<TvPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/favorites" element={<PrivateRoute />}></Route>
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <HomePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/tv"
+          element={
+            <PrivateRoute>
+              <TvPage />
+            </PrivateRoute>
+          }
+        />
+        {/* <Route
+          path="/favorites"
+          element={
+            <PrivateRoute>
+              <FavoritesPage />
+            </PrivateRoute>
+          }
+        /> */}
+        <Route
+          path="/login"
+          element={
+            <InversePrivateRoute>
+              <LoginPage />
+            </InversePrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

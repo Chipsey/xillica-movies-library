@@ -6,10 +6,17 @@ const logger = require("./utils/logger");
 const userRoutes = require("./routes/user-routes");
 const favoriteRoutes = require("./routes/favorite-routes");
 
+const cors = require("cors");
+
 dotenv.config();
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 // Middleware
 app.use(express.json());
 
