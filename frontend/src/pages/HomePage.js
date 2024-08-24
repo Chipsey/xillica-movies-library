@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Grid, Typography, CircularProgress, Box, Button } from "@mui/material";
 import { fetchItems } from "../api/api";
 import { LIST_MOVIES, MOVIE_DETAILS } from "../config/apiEndpoints";
+import { useNavigate } from "react-router-dom";
 import Background from "../components/background";
 import MovieCard from "../components/movies/movieCard";
 import DetailCard from "../components/movies/detail-card";
@@ -24,6 +25,7 @@ import Divider from "../components/divider";
 
 import "../styles/homeStyles.css";
 import "../index.css";
+import localStorageService from "../utils/localStorage";
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -62,6 +64,7 @@ const HomePage = () => {
     genre: GENRE,
     sortBy: SORT_BY,
   });
+  const navigate = useNavigate();
 
   const moviesPerPage = 8;
 
@@ -152,6 +155,11 @@ const HomePage = () => {
 
   function replaceSpacesWithPlus(sentence) {
     return sentence.split(" ").join("+");
+  }
+
+  function handleLogOut() {
+    localStorageService.clear();
+    navigate("/login");
   }
 
   const handleNextPage = () => {
@@ -261,37 +269,49 @@ const HomePage = () => {
             }}
           >
             {/* Heading */}
-            <Grid container xl={10}>
-              <Grid xl={4}>
-                <h1 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
+            <Grid container spacing={2} xl={12}>
+              <Grid xl={4} sx={{ alignContent: "center" }}>
+                <h1 className="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
                   Xillica Movies
                 </h1>
-                <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
+                <h4 className="z0 color-white w-100 fw-200 text-center bg font-small m-0">
                   Surf Your Favorite Movies
                 </h4>
               </Grid>
-              <Grid xl={4}>
-                <h3 class="z0 color-white opacity-25 w-100 fw-700 text-center m-0 align-content-end">
-                  Xillica Series
-                </h3>
-                <h4 class="z0 color-white opacity-25 w-100 fw-200 text-center bg font-small m-0">
-                  Surf Your Favorite Series
-                </h4>
+              <Grid item xl={4} sx={{ alignContent: "center" }}>
+                <Button
+                  fullWidth
+                  onClick={() => {
+                    navigate("/tv");
+                  }}
+                >
+                  <Grid>
+                    <h3 className="z0 color-white  w-100 fw-700 text-center m-0 align-content-end">
+                      Xillica Series
+                    </h3>
+                  </Grid>
+                </Button>
               </Grid>
-              <Grid xl={2}>
-                <h3 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
-                  Profile
-                </h3>
-                <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
-                  Settings
-                </h4>
+              <Grid item xl={2} sx={{ alignContent: "center" }}>
+                <Button fullWidth>
+                  <Grid>
+                    <h3 className="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
+                      Profile
+                    </h3>
+                  </Grid>
+                </Button>
               </Grid>
-              <Grid xl={2}>
-                <h3 class="z0 color-white w-100 fw-700 text-center m-0 ">
-                  Log Out
-                </h3>
+              <Grid item xl={2} sx={{ alignContent: "center" }}>
+                <Button fullWidth onClick={handleLogOut}>
+                  <Grid>
+                    <h3 className="z0 color-white w-100 fw-700 text-center m-0">
+                      Log Out
+                    </h3>
+                  </Grid>
+                </Button>
               </Grid>
             </Grid>
+
             {/* Heading */}
 
             <Grid xl={12}>

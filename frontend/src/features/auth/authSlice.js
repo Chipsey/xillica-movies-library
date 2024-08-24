@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authAPI from "./authAPI";
 import localStorageService from "../../utils/localStorage";
+import { useNavigate } from "react-router-dom";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",

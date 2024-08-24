@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/auth/authSlice";
 import {
@@ -10,15 +10,27 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import localStorageService from "../utils/localStorage";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const [login, setLogin] = useState(false);
+  const { user, loading, error } = useSelector((state) => state.auth);
 
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    let token = localStorageService.getItem("token");
+    if (token) {
+      navigate("/");
+    }
+    setLogin(false);
+  }, [login, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,6 +43,7 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(loginUser(credentials));
+    setLogin(true);
   };
 
   return (

@@ -13,6 +13,8 @@ import { fetchItems } from "../api/api";
 import { OMDB_LIST, SERIES_DETAILS } from "../config/apiEndpoints";
 import Background from "../components/background";
 
+import { useNavigate } from "react-router-dom";
+
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -30,6 +32,7 @@ import TvCard from "../components/series/tvCard";
 import MainDetailsTV from "../components/series/mainDetailsTV";
 import TorrentsTV from "../components/series/torrentsTV";
 import DetailCardTV from "../components/series/detail-cardTV";
+import localStorageService from "../utils/localStorage";
 
 const TvPage = () => {
   const [movies, setMovies] = useState([]);
@@ -61,6 +64,7 @@ const TvPage = () => {
       .join("");
   };
 
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -211,6 +215,11 @@ const TvPage = () => {
     setSeason("");
     setEpisode("");
   };
+
+  function handleLogOut() {
+    localStorageService.clear();
+    navigate("/login");
+  }
 
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
@@ -371,12 +380,48 @@ const TvPage = () => {
             }}
           >
             {/* Heading */}
-            <h1 class="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
-              Xillica Series
-            </h1>
-            <h4 class="z0 color-white w-100 fw-200 text-center bg font-small m-0">
-              Surf Your Favorite Series
-            </h4>
+            <Grid container spacing={2} xl={12}>
+              <Grid xl={4} sx={{ alignContent: "center" }}>
+                <h1 className="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
+                  Xillica Series
+                </h1>
+                <h4 className="z0 color-white w-100 fw-200 text-center bg font-small m-0">
+                  Surf Your Favorite Series
+                </h4>
+              </Grid>
+              <Grid item xl={4} sx={{ alignContent: "center" }}>
+                <Button
+                  fullWidth
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                  <Grid>
+                    <h3 className="z0 color-white  w-100 fw-700 text-center m-0 align-content-end">
+                      Xillica Movies
+                    </h3>
+                  </Grid>
+                </Button>
+              </Grid>
+              <Grid item xl={2} sx={{ alignContent: "center" }}>
+                <Button fullWidth>
+                  <Grid>
+                    <h3 className="z0 color-white w-100 fw-700 text-center m-0 align-content-end">
+                      Profile
+                    </h3>
+                  </Grid>
+                </Button>
+              </Grid>
+              <Grid item xl={2} sx={{ alignContent: "center" }}>
+                <Button fullWidth onClick={handleLogOut}>
+                  <Grid>
+                    <h3 className="z0 color-white w-100 fw-700 text-center m-0">
+                      Log Out
+                    </h3>
+                  </Grid>
+                </Button>
+              </Grid>
+            </Grid>
             {/* Heading */}
 
             <Grid xl={12}>
