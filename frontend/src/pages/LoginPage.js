@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import localStorageService from "../utils/localStorage";
+import CustomTextField from "../components/customTextField";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -58,40 +59,34 @@ const LoginPage = () => {
     >
       <Box
         sx={{
-          p: 4,
-          borderRadius: 2,
+          p: 3,
+          borderRadius: 5,
           boxShadow: 3,
           bgcolor: "background.paper",
           width: "100%",
-          maxWidth: 400, // Adjust the maximum width as needed
+          maxWidth: 400,
         }}
       >
-        <Typography variant="h4" align="center" gutterBottom>
+        <Typography variant="h5" align="center" gutterBottom>
           Login
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box mb={3}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
+            <CustomTextField
+              label="email"
               type="email"
+              name="email"
               value={credentials.email}
               onChange={handleChange}
-              variant="outlined"
-              margin="normal"
-              required
+              required={true}
             />
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
+            <CustomTextField
+              label="password"
               type="password"
+              name="password"
               value={credentials.password}
               onChange={handleChange}
-              variant="outlined"
-              margin="normal"
-              required
+              required={true}
             />
           </Box>
           {error && (
